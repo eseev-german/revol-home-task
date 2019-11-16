@@ -12,37 +12,37 @@ import javax.ws.rs.core.MediaType;
 import java.util.Collections;
 import java.util.List;
 
-@Path("/")
+@Path("/accounts")
 public class MoneyTransferController {
     @POST
-    @Path("/accounts/{accountId}/transactions")
+    @Path("/{accountId}/transactions")
     @Produces(MediaType.APPLICATION_JSON)
     public MoneyTransactionDTO transferMoney(@PathParam("accountId") String accountId, MoneyTransactionDTO transaction) {
         return transaction;
     }
 
     @GET
-    @Path("accounts/transactions/{transactionId}")
+    @Path("/transactions/{transactionId}")
     @Produces(MediaType.APPLICATION_JSON)
     public MoneyTransactionDTO getTransaction(@PathParam("transactionId") String transactionId) {
         return new MoneyTransactionDTO();
     }
     @GET
-    @Path("accounts/{accountId}/transactions")
+    @Path("/{accountId}/transactions")
     @Produces(MediaType.APPLICATION_JSON)
     public List<MoneyTransactionDTO> getAccountTransactions(@PathParam("accountId") String accountId) {
         return Collections.emptyList();
     }
 
     @GET
-    @Path("accounts/transactions")
+    @Path("/transactions")
     @Produces(MediaType.APPLICATION_JSON)
     public List<MoneyTransactionDTO> getTransactions() {
         return Collections.emptyList();
     }
 
     @DELETE
-    @Path("accounts/transactions/{transactionId}")
+    @Path("/transactions/{transactionId}")
     @Produces(MediaType.APPLICATION_JSON)
     public MoneyTransactionDTO deleteTransaction(@PathParam("transactionId") String transactionId) {
         return new MoneyTransactionDTO();
