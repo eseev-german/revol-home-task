@@ -3,7 +3,8 @@ plugins {
     id 'application'
 }
 
-def  jettyVersion = '9.4.22.v20191022'
+def jettyVersion = '9.4.22.v20191022'
+def jerseyVersion = '2.29.1'
 
 repositories {
     jcenter()
@@ -13,7 +14,15 @@ dependencies {
     implementation "org.eclipse.jetty:jetty-server:${jettyVersion}"
     implementation "org.eclipse.jetty:jetty-servlet:${jettyVersion}"
 
-    testImplementation 'junit:junit:4.12'
+    implementation "org.glassfish.jersey.core:jersey-server:${jerseyVersion}"
+    implementation "org.glassfish.jersey.containers:jersey-container-servlet-core:${jerseyVersion}"
+    implementation "org.glassfish.jersey.containers:jersey-container-jetty-http:${jerseyVersion}"
+    implementation "org.glassfish.jersey.media:jersey-media-json-jackson:${jerseyVersion}"
+    implementation "org.glassfish.jersey.inject:jersey-hk2:${jerseyVersion}"
+    implementation "javax.xml.bind:jaxb-api:2.2.11"
+    implementation "org.glassfish.jaxb:jaxb-runtime:2.3.1"
+
+    testImplementation "junit:junit:4.12"
 }
 
 mainClassName = 'revol.home.task.App'
