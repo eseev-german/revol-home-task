@@ -19,8 +19,11 @@ dependencies {
     implementation "org.glassfish.jersey.containers:jersey-container-jetty-http:${jerseyVersion}"
     implementation "org.glassfish.jersey.media:jersey-media-json-jackson:${jerseyVersion}"
     implementation "org.glassfish.jersey.inject:jersey-hk2:${jerseyVersion}"
+
     implementation "javax.xml.bind:jaxb-api:2.2.11"
     implementation "org.glassfish.jaxb:jaxb-runtime:2.3.1"
+
+    implementation "com.h2database:h2:1.4.200"
 
     testImplementation "junit:junit:4.12"
 }
