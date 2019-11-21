@@ -1,40 +1,13 @@
 package revol.home.task;
 
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.glassfish.jersey.servlet.ServletContainer;
+import revol.home.task.server.ServerBootstrap;
 
 public class App {
     private final static int SERVER_PORT = 8081;
+    private final static String APPLICATION_CONFIG_PATH = "revol.home.task.config.ContainerConfig";
 
-    private static Server createServer() {
-        Server server = new Server(SERVER_PORT);
-
-        ServletContextHandler servletContextHandler = new ServletContextHandler();
-
-        servletContextHandler.setContextPath("/");
-
-        ServletHolder servletHolder = servletContextHandler.addServlet(ServletContainer.class, "/*");
-        servletHolder.setInitOrder(0);
-        servletHolder.setInitParameter(
-                "javax.ws.rs.Application",
-                "revol.home.task.config.ContainerConfig"
-        );
-        server.setHandler(servletContextHandler);
-        return server;
-    }
-
-    public static void main(String[] args) throws Exception {
-        Server server = createServer();
-        try {
-            server.start();
-            server.join();
-        } catch (Exception ignore) {
-
-        } finally {
-            server.stop();
-        }
-
+    public static void main(String[] args) {
+        ServerBootstrap serverBootstrap = new ServerBootstrap(SERVER_PORT, APPLICATION_CONFIG_PATH);
+        serverBootstrap.setUpServer();
     }
 }

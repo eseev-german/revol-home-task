@@ -26,6 +26,7 @@ dependencies {
     implementation "com.h2database:h2:1.4.200"
 
     testImplementation "junit:junit:4.12"
+    testImplementation "org.testcontainers:testcontainers:1.12.3"
 }
 
 mainClassName = 'revol.home.task.App'
