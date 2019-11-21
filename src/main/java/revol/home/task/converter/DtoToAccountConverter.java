@@ -11,7 +11,7 @@ public class DtoToAccountConverter implements Function<AccountDTO, Account> {
 
     @Override
     public Account apply(AccountDTO accountDTO) {
-        Objects.requireNonNull(accountDTO);
+        Objects.requireNonNull(accountDTO, "Account DTO cannot be null");
         return Account.builder()
                       .balance(new BigDecimal(accountDTO.getBalance()))
                       .build();

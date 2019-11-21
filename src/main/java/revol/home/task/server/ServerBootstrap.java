@@ -14,7 +14,7 @@ public class ServerBootstrap {
         this.applicationConfigPath = applicationConfigPath;
     }
 
-    private Server createServer() {
+    public Server createServer() {
         Server server = new Server(serverPort);
 
         ServletContextHandler servletContextHandler = new ServletContextHandler();
@@ -31,20 +31,4 @@ public class ServerBootstrap {
         return server;
     }
 
-    public void setUpServer() {
-        Server server = createServer();
-        try {
-            server.start();
-            server.join();
-        } catch (Exception ignore) {
-
-        } finally {
-            try {
-                server.stop();
-            } catch (Exception ignore) {
-
-            }
-        }
-
-    }
 }

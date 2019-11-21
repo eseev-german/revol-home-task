@@ -1,6 +1,8 @@
 package revol.home.task.db.dao;
 
 import org.h2.jdbcx.JdbcConnectionPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import revol.home.task.db.ConnectionPoolProvider;
 import revol.home.task.exception.RuntimeSqlException;
 import revol.home.task.model.Account;
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class AccountDAO {
+    private final static Logger LOG = LoggerFactory.getLogger(AccountDAO.class);
 
     private final ConnectionPoolProvider connectionPoolProvider;
 
@@ -41,7 +44,9 @@ public class AccountDAO {
                               .build();
             }
         } catch (SQLException e) {
-            throw new RuntimeSqlException("Problem while creating account is occurred.", e);
+            String errorMessage = "Problem while creating account is occurred.";
+            LOG.error(errorMessage, e);
+            throw new RuntimeSqlException(errorMessage, e);
         }
         return account;
     }
@@ -57,7 +62,9 @@ public class AccountDAO {
             resultSet.next();
             return getAccount(resultSet);
         } catch (SQLException e) {
-            throw new RuntimeSqlException(String.format("Problem while getting account with id=[%d] is occurred.", transactionId), e);
+            String errorMessage = String.format("Problem while getting account with id=[%d] is occurred.", transactionId);
+            LOG.error(errorMessage, e);
+            throw new RuntimeSqlException(errorMessage, e);
         }
     }
 
@@ -69,7 +76,9 @@ public class AccountDAO {
             ResultSet result = preparedStatement.executeQuery();
             return getAccountList(result);
         } catch (SQLException e) {
-            throw new RuntimeSqlException("Problem while getting accounts is occurred.", e);
+            String errorMessage = "Problem while getting accounts is occurred.";
+            LOG.error(errorMessage, e);
+            throw new RuntimeSqlException(errorMessage, e);
         }
     }
 
@@ -95,7 +104,9 @@ public class AccountDAO {
                 throw e;
             }
         } catch (SQLException e) {
-            throw new RuntimeSqlException("Problem while updating accounts is occurred.", e);
+            String errorMessage = "Problem while updating accounts is occurred.";
+            LOG.error(errorMessage, e);
+            throw new RuntimeSqlException(errorMessage, e);
         }
     }
 

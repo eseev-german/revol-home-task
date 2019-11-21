@@ -11,7 +11,7 @@ public class DtoToMoneyTransferConverter implements Function<MoneyTransferDTO, M
 
     @Override
     public MoneyTransfer apply(MoneyTransferDTO moneyTransferDTO) {
-        Objects.requireNonNull(moneyTransferDTO);
+        Objects.requireNonNull(moneyTransferDTO, "Money transfer DTO cannot be null");
         return MoneyTransfer.builder()
                             .amount(new BigDecimal(moneyTransferDTO.getAmount()))
                             .destinationAccount(Long.parseLong(moneyTransferDTO.getDestinationAccount()))

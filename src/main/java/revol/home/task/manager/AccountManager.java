@@ -25,14 +25,14 @@ public class AccountManager {
     }
 
     public AccountDTO createAccount(AccountDTO account) {
-        Objects.requireNonNull(account);
+        Objects.requireNonNull(account, "Account cannot be null.");
         return dtoToAccountConverter.andThen(accountDAO::createAccount)
                                     .andThen(accountToDtoConverter)
                                     .apply(account);
     }
 
     public AccountDTO getAccount(String accountId) {
-        Objects.requireNonNull(accountId);
+        Objects.requireNonNull(accountId, "Account id cannot be null.");
         return accountToDtoConverter.compose(accountDAO::getAccountById)
                                     .apply(Long.parseLong(accountId));
     }
