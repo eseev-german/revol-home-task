@@ -9,10 +9,13 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
 
+import static integration.revol.home.task.DaoTestUtil.ACCOUNT_DAO;
+import static integration.revol.home.task.DaoTestUtil.createAccount;
+import static integration.revol.home.task.DaoTestUtil.deleteAllRows;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class AccountDAOGettingTest extends DaoBaseTest {
+public class AccountDAOGettingTest {
     private final static long FIRST_ACCOUNT_ID = 11L;
     private final static BigDecimal FIRST_ACCOUNT_BALANCE = BigDecimal.TEN;
     private final static long SECOND_ACCOUNT_ID = 3L;

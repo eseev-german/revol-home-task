@@ -1,7 +1,10 @@
 package revol.home.task.dto;
 
 public final class ErrorDto {
-    private final String error;
+    private String error;
+
+    public ErrorDto() {
+    }
 
     public ErrorDto(String error) {
         this.error = error;
@@ -10,5 +13,4 @@ public final class ErrorDto {
     public String getError() {
         return error;
     }
-
 }

@@ -6,12 +6,14 @@ import revol.home.task.manager.AccountManager;
 import revol.home.task.manager.TransferManager;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Path("/accounts")
@@ -27,14 +29,17 @@ public class AccountController {
     }
 
     @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/transactions")
-    public void transferMoney(MoneyTransferDTO transaction) {
+    @Path("/transfers")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response transferMoney(MoneyTransferDTO transaction) {
         transferManager.transferMoney(transaction);
+        return Response.ok()
+                       .build();
     }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     public AccountDTO createAccount(AccountDTO account) {
         return accountManager.createAccount(account);
     }

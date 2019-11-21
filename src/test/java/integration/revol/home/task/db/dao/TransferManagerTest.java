@@ -5,16 +5,20 @@ import org.junit.Before;
 import org.junit.Test;
 import revol.home.task.converter.DtoToMoneyTransferConverter;
 import revol.home.task.dto.MoneyTransferDTO;
-import revol.home.task.exception.TransferException;
+import revol.home.task.exception.WrongDataException;
 import revol.home.task.manager.TransferManager;
 import revol.home.task.model.Account;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
 
+import static integration.revol.home.task.DaoTestUtil.ACCOUNT_DAO;
+import static integration.revol.home.task.DaoTestUtil.createAccount;
+import static integration.revol.home.task.DaoTestUtil.deleteAllRows;
+import static integration.revol.home.task.DaoTestUtil.getAccountById;
 import static org.junit.Assert.assertEquals;
 
-public class TransferManagerTest extends DaoBaseTest {
+public class TransferManagerTest {
     private final static Account EMPTY_ACCOUNT;
     private final static Account ACCOUNT_WITH_MONEY;
     private final static String EMPTY_ACCOUNT_ID_STRING = "10";
@@ -64,7 +68,7 @@ public class TransferManagerTest extends DaoBaseTest {
         assertEquals(BigDecimal.ONE, destinationAccount.getBalance());
     }
 
-    @Test(expected = TransferException.class)
+    @Test(expected = WrongDataException.class)
     public void notEnoughMoneyOnSourceAccount() {
         MoneyTransferDTO transfer = new MoneyTransferDTO();
         transfer.setAmount("1");
@@ -74,7 +78,7 @@ public class TransferManagerTest extends DaoBaseTest {
         transferManager.transferMoney(transfer);
     }
 
-    @Test(expected = TransferException.class)
+    @Test(expected = WrongDataException.class)
     public void transferringValueIsNegative() {
         MoneyTransferDTO transfer = new MoneyTransferDTO();
         transfer.setAmount("-11");

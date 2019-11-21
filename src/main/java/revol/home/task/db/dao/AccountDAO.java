@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import revol.home.task.db.ConnectionPoolProvider;
 import revol.home.task.exception.RuntimeSqlException;
+import revol.home.task.exception.WrongDataException;
 import revol.home.task.model.Account;
 
 import javax.inject.Inject;
@@ -51,18 +52,23 @@ public class AccountDAO {
         return account;
     }
 
-    public Account getAccountById(Long transactionId) {
-        Objects.requireNonNull(transactionId);
+    public Account getAccountById(Long accountId) {
+        Objects.requireNonNull(accountId);
         JdbcConnectionPool connectionPool = connectionPoolProvider.get();
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
                      "SELECT * FROM ACCOUNT WHERE ID=? ")) {
-            preparedStatement.setLong(1, transactionId);
+            preparedStatement.setLong(1, accountId);
             ResultSet resultSet = preparedStatement.executeQuery();
-            resultSet.next();
-            return getAccount(resultSet);
+            if (resultSet.next()) {
+                return getAccount(resultSet);
+            } else {
+                String noAccountErrorMessage = String.format("No account with given id=[%d].", accountId);
+                LOG.error(noAccountErrorMessage);
+                throw new WrongDataException(noAccountErrorMessage);
+            }
         } catch (SQLException e) {
-            String errorMessage = String.format("Problem while getting account with id=[%d] is occurred.", transactionId);
+            String errorMessage = String.format("Problem while getting account with id=[%d] is occurred.", accountId);
             LOG.error(errorMessage, e);
             throw new RuntimeSqlException(errorMessage, e);
         }

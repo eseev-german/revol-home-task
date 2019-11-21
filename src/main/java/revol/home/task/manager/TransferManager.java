@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import revol.home.task.converter.DtoToMoneyTransferConverter;
 import revol.home.task.db.dao.AccountDAO;
 import revol.home.task.dto.MoneyTransferDTO;
-import revol.home.task.exception.TransferException;
+import revol.home.task.exception.WrongDataException;
 import revol.home.task.model.Account;
 import revol.home.task.model.MoneyTransfer;
 
@@ -34,7 +34,7 @@ public class TransferManager {
         if (sourceAccount.getBalance()
                          .compareTo(transferAmount) < 0) {
             LOG.error("Attempt to make a transfer from an account with a lack of fund.");
-            throw new TransferException(String.format("There are not enough money for transfer in account with id=[%d].", sourceAccount.getId()));
+            throw new WrongDataException(String.format("There are not enough money for transfer in account with id=[%d].", sourceAccount.getId()));
         }
 
         Account destinationAccount = accountDAO.getAccountById(transfer.getDestinationAccount());
@@ -51,7 +51,7 @@ public class TransferManager {
         if (transfer.getAmount()
                     .signum() < 0) {
             LOG.error("Attempt to make a transfer of negative value.");
-            throw new TransferException("It is impossible to transfer negative value.");
+            throw new WrongDataException("It is impossible to transfer negative value.");
         }
         return transfer;
     }

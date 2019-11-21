@@ -8,9 +8,12 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
 
+import static integration.revol.home.task.DaoTestUtil.ACCOUNT_DAO;
+import static integration.revol.home.task.DaoTestUtil.deleteAllRows;
+import static integration.revol.home.task.DaoTestUtil.getAllAccounts;
 import static org.junit.Assert.assertEquals;
 
-public class AccountDAOCreationTest extends DaoBaseTest {
+public class AccountDAOCreationTest {
     private final static Account ACCOUNT;
 
     static {
