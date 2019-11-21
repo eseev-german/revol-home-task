@@ -3,8 +3,6 @@ package integration.revol.home.task.db.dao;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.BlockJUnit4ClassRunner;
 import revol.home.task.model.Account;
 import revol.home.task.model.MoneyTransfer;
 
@@ -14,7 +12,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-@RunWith(BlockJUnit4ClassRunner.class)
 public class AccountDAOTransferMoneyTest extends AccountDaoBaseTest {
 
     private final static Account EMPTY_ACCOUNT;
@@ -57,13 +54,11 @@ public class AccountDAOTransferMoneyTest extends AccountDaoBaseTest {
 
         List<Account> allAccounts = getAllAccounts();
         Account sourceAccount = allAccounts.stream()
-                                           .filter(a -> a.getId()
-                                                         .equals(ACCOUNT_WITH_MONEY_ID))
+                                           .filter(a -> ACCOUNT_WITH_MONEY_ID == a.getId())
                                            .findAny()
                                            .get();
         Account destinationAccount = allAccounts.stream()
-                                                .filter(a -> a.getId()
-                                                              .equals(EMPTY_ACCOUNT_ID))
+                                                .filter(a -> EMPTY_ACCOUNT_ID == a.getId())
                                                 .findAny()
                                                 .get();
 
@@ -73,7 +68,7 @@ public class AccountDAOTransferMoneyTest extends AccountDaoBaseTest {
     }
 
     @Test(expected = RuntimeException.class)
-    public void notEnoughMoneyOnSourceAccount() throws SQLException {
+    public void notEnoughMoneyOnSourceAccount() {
         MoneyTransfer transfer = MoneyTransfer.builder()
                                               .sourceAccount(EMPTY_ACCOUNT_ID)
                                               .destinationAccount(ACCOUNT_WITH_MONEY_ID)

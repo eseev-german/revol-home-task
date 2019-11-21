@@ -2,8 +2,6 @@ package integration.revol.home.task.db.dao;
 
 import org.junit.After;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.BlockJUnit4ClassRunner;
 import revol.home.task.model.Account;
 
 import java.math.BigDecimal;
@@ -12,7 +10,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-@RunWith(BlockJUnit4ClassRunner.class)
+//@RunWith(BlockJUnit4ClassRunner.class)
 public class AccountDAOCreationTest extends AccountDaoBaseTest {
     private final static Account ACCOUNT;
 
