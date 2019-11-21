@@ -12,7 +12,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class AccountDAOGettingTest extends DaoBaseTest {
+public class AccountDAOUpdatingTest extends DaoBaseTest {
     private final static long FIRST_ACCOUNT_ID = 11L;
     private final static BigDecimal FIRST_ACCOUNT_BALANCE = BigDecimal.TEN;
     private final static long SECOND_ACCOUNT_ID = 3L;
@@ -44,23 +44,41 @@ public class AccountDAOGettingTest extends DaoBaseTest {
     }
 
     @Test
-    public void getRightAccount() {
-        Account result = ACCOUNT_DAO.getAccountById(SECOND_ACCOUNT_ID);
+    public void updateOneAccount() throws SQLException {
+        Account newAccount = Account.builder()
+                                    .id(FIRST_ACCOUNT_ID)
+                                    .balance(BigDecimal.ZERO)
+                                    .build();
 
-        assertEquals(SECOND_ACCOUNT, result);
+        ACCOUNT_DAO.updateAccounts(newAccount);
+
+        Account updatedAccount = getAccountById(FIRST_ACCOUNT_ID);
+
+        assertEquals(newAccount, updatedAccount);
     }
 
     @Test
-    public void getAllSavedAccounts() throws SQLException {
-        List<Account> result = ACCOUNT_DAO.getAllAccounts();
+    public void updateTwoAccounts() throws SQLException {
+        Account firstNewAccount = Account.builder()
+                                         .id(FIRST_ACCOUNT_ID)
+                                         .balance(BigDecimal.ZERO)
+                                         .build();
+        Account secondNewAccount = Account.builder()
+                                          .id(SECOND_ACCOUNT_ID)
+                                          .balance(BigDecimal.TEN)
+                                          .build();
 
-        assertEquals(2, result.size());
-        assertTrue(result.contains(FIRST_ACCOUNT));
-        assertTrue(result.contains(SECOND_ACCOUNT));
+        ACCOUNT_DAO.updateAccounts(firstNewAccount, secondNewAccount);
+
+        List<Account> allAccounts = getAllAccounts();
+
+        assertEquals(2, allAccounts.size());
+        assertTrue(allAccounts.contains(firstNewAccount));
+        assertTrue(allAccounts.contains(secondNewAccount));
     }
 
     @Test(expected = NullPointerException.class)
-    public void npeWhenAccountIsNull() {
-        ACCOUNT_DAO.createAccount(null);
+    public void npeWhenAccountsIsNull() {
+        ACCOUNT_DAO.updateAccounts(null);
     }
 }

@@ -10,8 +10,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-//@RunWith(BlockJUnit4ClassRunner.class)
-public class AccountDAOCreationTest extends AccountDaoBaseTest {
+public class AccountDAOCreationTest extends DaoBaseTest {
     private final static Account ACCOUNT;
 
     static {
@@ -38,7 +37,6 @@ public class AccountDAOCreationTest extends AccountDaoBaseTest {
 
         List<Account> allAccounts = getAllAccounts();
 
-        assertEquals(1, allAccounts.size());
         assertEquals(BigDecimal.TEN, allAccounts.get(0)
                                                 .getBalance());
     }

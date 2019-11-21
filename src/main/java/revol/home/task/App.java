@@ -18,8 +18,8 @@ public class App {
         ServletHolder servletHolder = servletContextHandler.addServlet(ServletContainer.class, "/*");
         servletHolder.setInitOrder(0);
         servletHolder.setInitParameter(
-                "jersey.config.server.provider.packages",
-                "revol.home.task"
+                "javax.ws.rs.Application",
+                "revol.home.task.config.ContainerConfig"
         );
         server.setHandler(servletContextHandler);
         return server;

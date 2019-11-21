@@ -3,7 +3,9 @@ package revol.home.task.controller;
 import revol.home.task.dto.AccountDTO;
 import revol.home.task.dto.MoneyTransferDTO;
 import revol.home.task.manager.AccountManager;
+import revol.home.task.manager.TransferManager;
 
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -15,13 +17,20 @@ import java.util.List;
 @Path("/accounts")
 public class AccountController {
 
-    private AccountManager accountManager = new AccountManager();
+    private final AccountManager accountManager;
+    private final TransferManager transferManager;
+
+    @Inject
+    public AccountController(AccountManager accountManager, TransferManager transferManager) {
+        this.accountManager = accountManager;
+        this.transferManager = transferManager;
+    }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/transactions")
     public void transferMoney(MoneyTransferDTO transaction) {
-        accountManager.transferMoney(transaction);
+        transferManager.transferMoney(transaction);
     }
 
     @POST

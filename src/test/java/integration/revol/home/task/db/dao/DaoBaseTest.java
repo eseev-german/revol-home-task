@@ -2,6 +2,7 @@ package integration.revol.home.task.db.dao;
 
 import integration.TestConnectionPoolProvider;
 import org.h2.jdbcx.JdbcConnectionPool;
+import revol.home.task.db.ConnectionPoolProvider;
 import revol.home.task.db.dao.AccountDAO;
 import revol.home.task.model.Account;
 
@@ -12,10 +13,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
-public class AccountDaoBaseTest {
-    private final static Supplier<JdbcConnectionPool> POOL_PROVIDER = new TestConnectionPoolProvider();
+public class DaoBaseTest {
+    private final static ConnectionPoolProvider POOL_PROVIDER = new TestConnectionPoolProvider();
 
     protected final static AccountDAO ACCOUNT_DAO = new AccountDAO(POOL_PROVIDER);
 
@@ -35,6 +35,17 @@ public class AccountDaoBaseTest {
                                                   .getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM ACCOUNT")) {
             preparedStatement.executeUpdate();
+        }
+    }
+
+    protected Account getAccountById(Long id) throws SQLException {
+        JdbcConnectionPool connectionPool = POOL_PROVIDER.get();
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM ACCOUNT WHERE ID=?")) {
+            preparedStatement.setLong(1, id);
+            ResultSet result = preparedStatement.executeQuery();
+            result.next();
+            return getAccount(result);
         }
     }
 

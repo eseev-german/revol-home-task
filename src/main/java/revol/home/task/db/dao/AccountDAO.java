@@ -1,10 +1,11 @@
 package revol.home.task.db.dao;
 
 import org.h2.jdbcx.JdbcConnectionPool;
+import revol.home.task.db.ConnectionPoolProvider;
+import revol.home.task.exception.RuntimeSqlException;
 import revol.home.task.model.Account;
-import revol.home.task.model.MoneyTransfer;
 
-import java.math.BigDecimal;
+import javax.inject.Inject;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,13 +14,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Supplier;
 
 public class AccountDAO {
 
-    private final Supplier<JdbcConnectionPool> connectionPoolProvider;
+    private final ConnectionPoolProvider connectionPoolProvider;
 
-    public AccountDAO(Supplier<JdbcConnectionPool> connectionPoolProvider) {
+    @Inject
+    public AccountDAO(ConnectionPoolProvider connectionPoolProvider) {
         this.connectionPoolProvider = connectionPoolProvider;
     }
 
@@ -40,7 +41,7 @@ public class AccountDAO {
                               .build();
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeSqlException("Problem while creating account is occurred.", e);
         }
         return account;
     }
@@ -56,7 +57,7 @@ public class AccountDAO {
             resultSet.next();
             return getAccount(resultSet);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeSqlException(String.format("Problem while getting account with id=[%d] is occurred.", transactionId), e);
         }
     }
 
@@ -68,57 +69,33 @@ public class AccountDAO {
             ResultSet result = preparedStatement.executeQuery();
             return getAccountList(result);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeSqlException("Problem while getting accounts is occurred.", e);
         }
     }
 
-    public void transferMoney(MoneyTransfer transfer) {
-        Objects.requireNonNull(transfer);
 
-        if (transfer.getAmount()
-                    .signum() < 0) {
-            throw new RuntimeException("It is impossible to transfer negative value");
-        }
-
-        Account sourceAccount = getAccountById(transfer.getSourceAccount());
-        BigDecimal transferAmount = transfer.getAmount();
-        if (sourceAccount.getBalance()
-                         .compareTo(transferAmount) < 0) {
-            throw new RuntimeException("There are not enough money for transfer in account with id=" + sourceAccount.getId());
-        }
-        Account destinationAccount = getAccountById(transfer.getDestinationAccount());
-
-        Account updatedSourceAccount = Account.builder()
-                                              .id(sourceAccount.getId())
-                                              .balance(sourceAccount.getBalance().subtract(transferAmount))
-                                              .build();
-
-        Account updatedDestinationAccount = Account.builder()
-                                                   .id(destinationAccount.getId())
-                                                   .balance(transferAmount.add(destinationAccount.getBalance()))
-                                                   .build();
-
-        updateAccount(updatedSourceAccount, updatedDestinationAccount);
-    }
-
-    private void updateAccount(Account firstAccount, Account secondAccount) {
+    public void updateAccounts(Account... accounts) {
+        Objects.requireNonNull(accounts);
         JdbcConnectionPool connectionPool = connectionPoolProvider.get();
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement accountUpdateStatement = connection.prepareStatement(
                      "UPDATE ACCOUNT SET BALANCE=? WHERE ID=?")) {
-            connection.setAutoCommit(false);
+            try {
+                connection.setAutoCommit(false);
 
-            accountUpdateStatement.setBigDecimal(1, firstAccount.getBalance());
-            accountUpdateStatement.setLong(2, firstAccount.getId());
-            accountUpdateStatement.executeUpdate();
+                for (Account account : accounts) {
+                    accountUpdateStatement.setBigDecimal(1, account.getBalance());
+                    accountUpdateStatement.setLong(2, account.getId());
+                    accountUpdateStatement.executeUpdate();
+                }
 
-            accountUpdateStatement.setBigDecimal(1, secondAccount.getBalance());
-            accountUpdateStatement.setLong(2, secondAccount.getId());
-            accountUpdateStatement.executeUpdate();
-
-            connection.commit();
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+                throw e;
+            }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeSqlException("Problem while updating accounts is occurred.", e);
         }
     }
 

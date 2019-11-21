@@ -3,7 +3,7 @@ package revol.home.task.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class AccountDTO {
-    @JsonProperty(access=JsonProperty.Access.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String id;
     private String balance;
 

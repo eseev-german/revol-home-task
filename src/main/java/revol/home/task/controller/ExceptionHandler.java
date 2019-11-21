@@ -10,7 +10,7 @@ public class ExceptionHandler implements ExceptionMapper<Exception> {
     @Override
     public Response toResponse(Exception exception) {
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                       .entity(exception.getMessage())
+                       .entity("Internal server error")
                        .type(MediaType.TEXT_PLAIN_TYPE)
                        .build();
     }
