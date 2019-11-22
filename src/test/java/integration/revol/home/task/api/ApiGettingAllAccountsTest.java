@@ -66,8 +66,9 @@ public class ApiGettingAllAccountsTest {
     }
 
     @Test
-    public void noAccountsReturnsIfDbIsEmpty() throws SQLException {
-        List<AccountDTO> result = getAccounts().extract()
+    public void noAccountsReturnsIfDbIsEmpty() {
+        List<AccountDTO> result = getAccounts().statusCode(200)
+                                               .extract()
                                                .as(new TypeRef<List<AccountDTO>>() {
                                                });
         assertTrue(result.isEmpty());
