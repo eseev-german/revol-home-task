@@ -66,7 +66,7 @@ public class ApiMoneyTransferTest {
     }
 
     @Test
-    public void errorWhenTransferMoreThanOnAccount() throws SQLException {
+    public void errorWhenTransferMoreThanOnAccountBalance() throws SQLException {
         doTransfer("11").statusCode(400);
 
         Account firstAccount = getAccountById(SOURCE_ACCOUNT);
@@ -87,13 +87,107 @@ public class ApiMoneyTransferTest {
         assertEquals(BigDecimal.ZERO, secondAccount.getBalance());
     }
 
+    @Test
+    public void errorWhenTransferEmptyValue() throws SQLException {
+        doTransfer("").statusCode(400);
+
+        Account firstAccount = getAccountById(SOURCE_ACCOUNT);
+        assertEquals(BigDecimal.TEN, firstAccount.getBalance());
+
+        Account secondAccount = getAccountById(DESTINATION_ACCOUNT);
+        assertEquals(BigDecimal.ZERO, secondAccount.getBalance());
+    }
+
+    @Test
+    public void errorWhenTransferFromUnknownSource() throws SQLException {
+        doTransfer("1", "3", DESTINATION_ACCOUNT).statusCode(400);
+
+        Account secondAccount = getAccountById(DESTINATION_ACCOUNT);
+        assertEquals(BigDecimal.ZERO, secondAccount.getBalance());
+    }
+
+    @Test
+    public void errorWhenTransferFromEmptySource() throws SQLException {
+        doTransfer("1", "", DESTINATION_ACCOUNT).statusCode(400);
+
+        Account secondAccount = getAccountById(DESTINATION_ACCOUNT);
+        assertEquals(BigDecimal.ZERO, secondAccount.getBalance());
+    }
+
+    @Test
+    public void errorWhenTransferFromInvalidIdSource() throws SQLException {
+        doTransfer("1", "not_a_long", DESTINATION_ACCOUNT).statusCode(400);
+
+        Account secondAccount = getAccountById(DESTINATION_ACCOUNT);
+        assertEquals(BigDecimal.ZERO, secondAccount.getBalance());
+    }
+
+    @Test
+    public void errorWhenTransferToUnknownDestination() throws SQLException {
+        doTransfer("1", SOURCE_ACCOUNT, "3").statusCode(400);
+
+        Account firstAccount = getAccountById(SOURCE_ACCOUNT);
+        assertEquals(BigDecimal.TEN, firstAccount.getBalance());
+    }
+
+    @Test
+    public void errorWhenTransferToInvalidDestination() throws SQLException {
+        doTransfer("1", SOURCE_ACCOUNT, "not_a_long").statusCode(400);
+
+        Account firstAccount = getAccountById(SOURCE_ACCOUNT);
+        assertEquals(BigDecimal.TEN, firstAccount.getBalance());
+    }
+
+    @Test
+    public void errorWhenTransferToEmptyDestination() throws SQLException {
+        doTransfer("1", SOURCE_ACCOUNT, "").statusCode(400);
+
+        Account firstAccount = getAccountById(SOURCE_ACCOUNT);
+        assertEquals(BigDecimal.TEN, firstAccount.getBalance());
+    }
+
+    @Test
+    public void errorWhenTransferIsEmpty() throws SQLException {
+        doTransferStringBody("").statusCode(500);
+
+        Account firstAccount = getAccountById(SOURCE_ACCOUNT);
+        assertEquals(BigDecimal.TEN, firstAccount.getBalance());
+        Account secondAccount = getAccountById(DESTINATION_ACCOUNT);
+        assertEquals(BigDecimal.ZERO, secondAccount.getBalance());
+    }
+
+    @Test
+    public void errorWhenTransferIsWrongFormat() throws SQLException {
+        doTransferStringBody("Not_a_json").statusCode(500);
+
+        Account firstAccount = getAccountById(SOURCE_ACCOUNT);
+        assertEquals(BigDecimal.TEN, firstAccount.getBalance());
+        Account secondAccount = getAccountById(DESTINATION_ACCOUNT);
+        assertEquals(BigDecimal.ZERO, secondAccount.getBalance());
+    }
+
     private ValidatableResponse doTransfer(String amount) {
+        return doTransfer(amount, SOURCE_ACCOUNT, DESTINATION_ACCOUNT);
+    }
+
+    private ValidatableResponse doTransfer(String amount, String sourceAccount, String destinationAccount) {
         MoneyTransferDTO moneyTransferDTO = new MoneyTransferDTO();
         moneyTransferDTO.setAmount(amount);
-        moneyTransferDTO.setSourceAccount(SOURCE_ACCOUNT);
-        moneyTransferDTO.setDestinationAccount(DESTINATION_ACCOUNT);
+        moneyTransferDTO.setSourceAccount(sourceAccount);
+        moneyTransferDTO.setDestinationAccount(destinationAccount);
 
+        return doTransfer(moneyTransferDTO);
+    }
+
+    private ValidatableResponse doTransfer(MoneyTransferDTO moneyTransferDTO) {
         return given().body(moneyTransferDTO)
+                      .contentType(ContentType.JSON)
+                      .post("/accounts/transfers")
+                      .then();
+    }
+
+    private ValidatableResponse doTransferStringBody(String body) {
+        return given().body(body)
                       .contentType(ContentType.JSON)
                       .post("/accounts/transfers")
                       .then();

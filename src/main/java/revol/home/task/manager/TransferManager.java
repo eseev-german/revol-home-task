@@ -11,7 +11,6 @@ import revol.home.task.model.MoneyTransfer;
 
 import javax.inject.Inject;
 import java.math.BigDecimal;
-import java.util.Objects;
 
 public class TransferManager {
     private final static Logger LOG = LoggerFactory.getLogger(TransferManager.class);
@@ -26,14 +25,13 @@ public class TransferManager {
     }
 
     public void transferMoney(MoneyTransferDTO transferDTO) {
-        Objects.requireNonNull(transferDTO, "Money transfer cannot be null.");
         MoneyTransfer transfer = getConvertedMoneyTransfer(transferDTO);
 
         Account sourceAccount = accountDAO.getAccountById(transfer.getSourceAccount());
         BigDecimal transferAmount = transfer.getAmount();
         if (sourceAccount.getBalance()
                          .compareTo(transferAmount) < 0) {
-            LOG.error("Attempt to make a transfer from an account with a lack of fund.");
+            LOG.warn("Attempt to make a transfer from an account with a lack of fund.");
             throw new WrongDataException(String.format("There are not enough money for transfer in account with id=[%d].", sourceAccount.getId()));
         }
 
@@ -47,10 +45,9 @@ public class TransferManager {
 
     private MoneyTransfer getConvertedMoneyTransfer(MoneyTransferDTO transferDTO) {
         MoneyTransfer transfer = dtoToMoneyTransferConverter.apply(transferDTO);
-
         if (transfer.getAmount()
                     .signum() < 0) {
-            LOG.error("Attempt to make a transfer of negative value.");
+            LOG.warn("Attempt to make a transfer of negative value.");
             throw new WrongDataException("It is impossible to transfer negative value.");
         }
         return transfer;

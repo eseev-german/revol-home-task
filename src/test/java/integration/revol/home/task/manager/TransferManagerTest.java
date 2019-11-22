@@ -1,4 +1,4 @@
-package integration.revol.home.task.db.dao;
+package integration.revol.home.task.manager;
 
 import org.junit.After;
 import org.junit.Before;
@@ -84,6 +84,76 @@ public class TransferManagerTest {
         transfer.setAmount("-11");
         transfer.setSourceAccount(ACCOUNT_WITH_MONEY_ID_STRING);
         transfer.setDestinationAccount(EMPTY_ACCOUNT_ID_STRING);
+
+        transferManager.transferMoney(transfer);
+    }
+
+    @Test(expected = WrongDataException.class)
+    public void transferDtoIsNull() {
+        MoneyTransferDTO transfer = new MoneyTransferDTO();
+        transfer.setAmount("-11");
+        transfer.setSourceAccount(ACCOUNT_WITH_MONEY_ID_STRING);
+        transfer.setDestinationAccount(EMPTY_ACCOUNT_ID_STRING);
+
+        transferManager.transferMoney(transfer);
+    }
+
+    @Test(expected = WrongDataException.class)
+    public void transferringAmountIsEmpty() {
+        MoneyTransferDTO transfer = new MoneyTransferDTO();
+        transfer.setAmount("");
+        transfer.setSourceAccount(ACCOUNT_WITH_MONEY_ID_STRING);
+        transfer.setDestinationAccount(EMPTY_ACCOUNT_ID_STRING);
+
+        transferManager.transferMoney(transfer);
+    }
+
+    @Test(expected = WrongDataException.class)
+    public void sourceAccountIsEmpty() {
+        MoneyTransferDTO transfer = new MoneyTransferDTO();
+        transfer.setAmount("11");
+        transfer.setSourceAccount("");
+        transfer.setDestinationAccount(EMPTY_ACCOUNT_ID_STRING);
+
+        transferManager.transferMoney(transfer);
+    }
+
+    @Test(expected = WrongDataException.class)
+    public void destinationAccountIsEmpty() {
+        MoneyTransferDTO transfer = new MoneyTransferDTO();
+        transfer.setAmount("11");
+        transfer.setSourceAccount(ACCOUNT_WITH_MONEY_ID_STRING);
+        transfer.setDestinationAccount("");
+
+        transferManager.transferMoney(transfer);
+    }
+
+    @Test(expected = WrongDataException.class)
+    public void wrongAmountValue() {
+        MoneyTransferDTO transfer = new MoneyTransferDTO();
+        transfer.setAmount("Not_a_big_decimal");
+        transfer.setSourceAccount(ACCOUNT_WITH_MONEY_ID_STRING);
+        transfer.setDestinationAccount(EMPTY_ACCOUNT_ID_STRING);
+
+        transferManager.transferMoney(transfer);
+    }
+
+    @Test(expected = WrongDataException.class)
+    public void wrongSourceAccountValue() {
+        MoneyTransferDTO transfer = new MoneyTransferDTO();
+        transfer.setAmount("11");
+        transfer.setSourceAccount("Not_a_long");
+        transfer.setDestinationAccount(EMPTY_ACCOUNT_ID_STRING);
+
+        transferManager.transferMoney(transfer);
+    }
+
+    @Test(expected = WrongDataException.class)
+    public void wrongDestinationAccountValue() {
+        MoneyTransferDTO transfer = new MoneyTransferDTO();
+        transfer.setAmount("11");
+        transfer.setSourceAccount(ACCOUNT_WITH_MONEY_ID_STRING);
+        transfer.setDestinationAccount("Not_a_long");
 
         transferManager.transferMoney(transfer);
     }

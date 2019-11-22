@@ -3,6 +3,7 @@ package revol.home.task.converter;
 import org.junit.Before;
 import org.junit.Test;
 import revol.home.task.dto.AccountDTO;
+import revol.home.task.exception.WrongDataException;
 import revol.home.task.model.Account;
 
 import java.math.BigDecimal;
@@ -19,12 +20,12 @@ public class DtoToAccountConverterTest {
         converter = new DtoToAccountConverter();
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = WrongDataException.class)
     public void accountDtoIsNull() {
         converter.apply(null);
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test(expected = WrongDataException.class)
     public void wrongBalanceValue() {
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setBalance("wrong_balance");

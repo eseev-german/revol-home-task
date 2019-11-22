@@ -16,7 +16,6 @@ import static integration.revol.home.task.DaoTestUtil.deleteAllRows;
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
 
-
 public class ApiGettingAccountTest {
     private final static int TEST_PORT = 8081;
     private final static String APPLICATION_CONFIG_PATH = "integration.revol.home.task.config.TestContainerConfig";
@@ -52,6 +51,11 @@ public class ApiGettingAccountTest {
     @Test
     public void getAccountByUnknownId() {
         getAccountById("3").statusCode(400);
+    }
+
+    @Test
+    public void getAccountByWrongFormatId() {
+        getAccountById("not_a_long").statusCode(400);
     }
 
     private ValidatableResponse getAccountById(String id) {

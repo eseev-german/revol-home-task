@@ -3,6 +3,7 @@ package revol.home.task.converter;
 import org.junit.Before;
 import org.junit.Test;
 import revol.home.task.dto.MoneyTransferDTO;
+import revol.home.task.exception.WrongDataException;
 import revol.home.task.model.MoneyTransfer;
 
 import java.math.BigDecimal;
@@ -18,12 +19,12 @@ public class DtoToMoneyTransferConverterTest {
         converter = new DtoToMoneyTransferConverter();
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = WrongDataException.class)
     public void moneyTransferDtoIsNull() {
         converter.apply(null);
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test(expected = WrongDataException.class)
     public void wrongAmountValue() {
         MoneyTransferDTO moneyTransferDTO = new MoneyTransferDTO();
         moneyTransferDTO.setAmount("wrong_balance");
@@ -33,7 +34,7 @@ public class DtoToMoneyTransferConverterTest {
         converter.apply(moneyTransferDTO);
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test(expected = WrongDataException.class)
     public void wrongDestinationAccount() {
         MoneyTransferDTO moneyTransferDTO = new MoneyTransferDTO();
         moneyTransferDTO.setAmount("10");
@@ -43,7 +44,7 @@ public class DtoToMoneyTransferConverterTest {
         converter.apply(moneyTransferDTO);
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test(expected = WrongDataException.class)
     public void wrongSourceAccount() {
         MoneyTransferDTO moneyTransferDTO = new MoneyTransferDTO();
         moneyTransferDTO.setAmount("10");
