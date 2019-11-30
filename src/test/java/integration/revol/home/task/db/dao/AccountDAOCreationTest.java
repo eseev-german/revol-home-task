@@ -43,4 +43,9 @@ public class AccountDAOCreationTest {
         assertEquals(BigDecimal.TEN, allAccounts.get(0)
                                                 .getBalance());
     }
+
+    @Test(expected = NullPointerException.class)
+    public void accountIsNull() {
+        ACCOUNT_DAO.createAccount(null);
+    }
 }

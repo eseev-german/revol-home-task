@@ -2,6 +2,7 @@ package integration.revol.home.task.manager;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import revol.home.task.converter.DtoToMoneyTransferConverter;
 import revol.home.task.dto.MoneyTransferDTO;
@@ -11,6 +12,10 @@ import revol.home.task.model.Account;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static integration.revol.home.task.DaoTestUtil.ACCOUNT_DAO;
 import static integration.revol.home.task.DaoTestUtil.createAccount;
@@ -36,6 +41,7 @@ public class TransferManagerTest {
 
         ACCOUNT_WITH_MONEY = Account.builder()
                                     .id(ACCOUNT_WITH_MONEY_ID)
+//                                    .balance(BigDecimal.valueOf(1000000))
                                     .balance(BigDecimal.TEN)
                                     .build();
     }
@@ -156,5 +162,35 @@ public class TransferManagerTest {
         transfer.setDestinationAccount("Not_a_long");
 
         transferManager.transferMoney(transfer);
+    }
+
+    @Test
+    @Ignore
+    public void multipleAccountDao() {
+        ExecutorService service = Executors.newCachedThreadPool();
+        MoneyTransferDTO transfer = new MoneyTransferDTO();
+        transfer.setAmount("1");
+        transfer.setSourceAccount(ACCOUNT_WITH_MONEY_ID_STRING);
+        transfer.setDestinationAccount(EMPTY_ACCOUNT_ID_STRING);
+        BigDecimal expected = BigDecimal.valueOf(1000000);
+        AtomicInteger iterationCounter = new AtomicInteger(0);
+        int iterations = 1000;
+        for (int i = 0; i < iterations; i++) {
+            service.submit(() -> {
+
+
+                transferManager.transferMoney(transfer);
+
+                List<Account> allAccounts = ACCOUNT_DAO.getAllAccounts();
+
+                BigDecimal sum = allAccounts.get(0)
+                                            .getBalance()
+                                            .add(allAccounts.get(1)
+                                                            .getBalance());
+                iterationCounter.incrementAndGet();
+                assertEquals(expected, sum);//it won't fail test even if assertionError is thrown
+            });
+        }
+        while (iterationCounter.get() < iterations) ;
     }
 }
