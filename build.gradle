@@ -14,6 +14,10 @@ jar {
     exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
 }
 
+test {
+    systemProperty 'testPort', System.getProperty('testPort')
+}
+
 def jettyVersion = '9.4.22.v20191022'
 def jerseyVersion = '2.29.1'
 def slf4jVersion = '2.0.0-alpha1'

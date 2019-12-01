@@ -1,6 +1,5 @@
 package integration.revol.home.task.api;
 
-import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import org.eclipse.jetty.server.Server;
@@ -11,7 +10,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import revol.home.task.dto.MoneyTransferDTO;
 import revol.home.task.model.Account;
-import revol.home.task.server.ServerBootstrap;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -23,8 +21,6 @@ import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
 
 public class ApiMoneyTransferTest {
-    private final static int TEST_PORT = 8081;
-    private final static String APPLICATION_CONFIG_PATH = "integration.revol.home.task.config.TestContainerConfig";
     private final static String SOURCE_ACCOUNT = "1";
     private final static String DESTINATION_ACCOUNT = "2";
 
@@ -32,9 +28,7 @@ public class ApiMoneyTransferTest {
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        server = new ServerBootstrap(TEST_PORT, APPLICATION_CONFIG_PATH).createServer();
-
-        RestAssured.port = 8081;
+        server = TestServerBootstrap.createServer();
         server.start();
     }
 
