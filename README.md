@@ -5,7 +5,11 @@ Money transfers between accounts.
 
 Executable jar can be found [here](https://github.com/eseev-german/revol-home-task/releases).
 
-Application starts up on 8081 port. 
+Application starts up on 8081 port by default, but you can pass it through command line args. 
+For instance:
+```bash
+java -jar revol-home-task.jar 8082
+```
 
 Available api
 ---
@@ -113,6 +117,9 @@ Integration tests available in `test/java/integration`
 #### Api testing
 
 End-to-end test available in `test/java/integration/revol/home/task/api`.
-These tests will set up almost identical server copy on **8081** port.
-
-
+These tests will set up almost identical server copy on **8081** port by default. 
+But you able to run it on custom port via passing system property of the JVM with name "testPort". 
+For instance:
+```bash
+gradlew test -DtestPort=8082
+```
