@@ -1,4 +1,4 @@
-create table ACCOUNT
+create table if not exists ACCOUNT
 (
     ID     IDENTITY NOT NULL PRIMARY KEY,
     BALANCE DECIMAL  NOT NULL DEFAULT 0

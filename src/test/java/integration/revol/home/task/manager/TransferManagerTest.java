@@ -2,6 +2,7 @@ package integration.revol.home.task.manager;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import revol.home.task.converter.DtoToMoneyTransferConverter;
 import revol.home.task.dto.MoneyTransferDTO;
@@ -11,6 +12,9 @@ import revol.home.task.model.Account;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static integration.revol.home.task.DaoTestUtil.ACCOUNT_DAO;
 import static integration.revol.home.task.DaoTestUtil.createAccount;
@@ -36,7 +40,7 @@ public class TransferManagerTest {
 
         ACCOUNT_WITH_MONEY = Account.builder()
                                     .id(ACCOUNT_WITH_MONEY_ID)
-                                    .balance(BigDecimal.TEN)
+                                    .balance(BigDecimal.valueOf(1000))
                                     .build();
     }
 
@@ -64,7 +68,7 @@ public class TransferManagerTest {
         Account sourceAccount = getAccountById(ACCOUNT_WITH_MONEY_ID);
         Account destinationAccount = getAccountById(EMPTY_ACCOUNT_ID);
 
-        assertEquals(BigDecimal.valueOf(9L), sourceAccount.getBalance());
+        assertEquals(BigDecimal.valueOf(999), sourceAccount.getBalance());
         assertEquals(BigDecimal.ONE, destinationAccount.getBalance());
     }
 
@@ -156,5 +160,37 @@ public class TransferManagerTest {
         transfer.setDestinationAccount("Not_a_long");
 
         transferManager.transferMoney(transfer);
+    }
+
+    @Test
+    @Ignore("It is a naive test implementation")
+    public void multipleMoneyTransfer() {
+        MoneyTransferDTO transfer = new MoneyTransferDTO();
+        transfer.setAmount("1");
+        transfer.setSourceAccount(ACCOUNT_WITH_MONEY_ID_STRING);
+        transfer.setDestinationAccount(EMPTY_ACCOUNT_ID_STRING);
+        BigDecimal expected = BigDecimal.valueOf(1000);
+        AtomicInteger iterationCounter = new AtomicInteger(0);
+        int iterations = 1000;
+        AtomicInteger successfulIterations = new AtomicInteger();
+        for (int i = 0; i < iterations; i++) {
+            CompletableFuture.supplyAsync(() -> {
+                try {
+                    transferManager.transferMoney(transfer);
+
+                    List<Account> allAccounts = ACCOUNT_DAO.getAllAccounts();
+
+                    BigDecimal sum = allAccounts.get(0)
+                                                .getBalance()
+                                                .add(allAccounts.get(1)
+                                                                .getBalance());
+                    return expected.equals(sum) ? 1 : 0;
+                } finally {
+                    iterationCounter.incrementAndGet();
+                }
+            }).thenAccept(successfulIterations::addAndGet);
+        }
+        while (iterationCounter.get() < iterations) ;
+        assertEquals("Not all iterations finished successful", iterations, successfulIterations.get());
     }
 }

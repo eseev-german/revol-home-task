@@ -3,6 +3,8 @@ package integration.revol.home.task;
 import integration.TestConnectionPoolProvider;
 import org.h2.jdbcx.JdbcConnectionPool;
 import revol.home.task.db.ConnectionPoolProvider;
+import revol.home.task.db.PreparedStatementExecutor;
+import revol.home.task.db.PreparedStatementProvider;
 import revol.home.task.db.dao.AccountDAO;
 import revol.home.task.model.Account;
 
@@ -17,7 +19,7 @@ import java.util.List;
 
 public class DaoTestUtil {
     private final static ConnectionPoolProvider POOL_PROVIDER = new TestConnectionPoolProvider();
-    public final static AccountDAO ACCOUNT_DAO = new AccountDAO(POOL_PROVIDER);
+    public final static AccountDAO ACCOUNT_DAO = new AccountDAO(POOL_PROVIDER, new PreparedStatementProvider(), new PreparedStatementExecutor());
 
     private DaoTestUtil() {
     }

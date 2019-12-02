@@ -1,13 +1,11 @@
 package integration.revol.home.task.api;
 
-import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
 import org.eclipse.jetty.server.Server;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import revol.home.task.dto.AccountDTO;
-import revol.home.task.server.ServerBootstrap;
 
 import java.math.BigDecimal;
 
@@ -17,16 +15,11 @@ import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
 
 public class ApiGettingAccountTest {
-    private final static int TEST_PORT = 8081;
-    private final static String APPLICATION_CONFIG_PATH = "integration.revol.home.task.config.TestContainerConfig";
-
     private static Server server;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        server = new ServerBootstrap(TEST_PORT, APPLICATION_CONFIG_PATH).createServer();
-
-        RestAssured.port = 8081;
+        server = TestServerBootstrap.createServer();
         server.start();
 
         createAccount(1L, BigDecimal.TEN);
